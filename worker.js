@@ -2486,7 +2486,27 @@ function parseSIP002Format(ssLink) {
     const atIndex = prefixRemoved.indexOf('@');
     if (atIndex === -1) return null;
     
-    const [server, port] = prefixRemoved.substring(atIndex + 1).split(':');
+    // 正确解析服务器地址和端口，支持IPv6
+    const serverPortPart = prefixRemoved.substring(atIndex + 1);
+    let server, port;
+    
+    // 检查是否是IPv6地址（用方括号包围）
+    if (serverPortPart.startsWith('[')) {
+      const closeBracketIndex = serverPortPart.indexOf(']');
+      if (closeBracketIndex === -1) return null;
+      
+      server = serverPortPart.substring(1, closeBracketIndex); // 去掉方括号
+      const portPart = serverPortPart.substring(closeBracketIndex + 1);
+      port = portPart.startsWith(':') ? portPart.substring(1) : '';
+    } else {
+      // IPv4地址或域名，使用最后一个冒号分割
+      const lastColonIndex = serverPortPart.lastIndexOf(':');
+      if (lastColonIndex === -1) return null;
+      
+      server = serverPortPart.substring(0, lastColonIndex);
+      port = serverPortPart.substring(lastColonIndex + 1);
+    }
+    
     if (!server || !port) return null;
     
     let method, password;
@@ -2982,7 +3002,27 @@ function parseSSToClash(ssLink) {
     const atIndex = prefixRemoved.indexOf('@');
     if (atIndex === -1) return null;
     
-    const [server, port] = prefixRemoved.substring(atIndex + 1).split(':');
+    // 正确解析服务器地址和端口，支持IPv6
+    const serverPortPart = prefixRemoved.substring(atIndex + 1);
+    let server, port;
+    
+    // 检查是否是IPv6地址（用方括号包围）
+    if (serverPortPart.startsWith('[')) {
+      const closeBracketIndex = serverPortPart.indexOf(']');
+      if (closeBracketIndex === -1) return null;
+      
+      server = serverPortPart.substring(1, closeBracketIndex); // 去掉方括号
+      const portPart = serverPortPart.substring(closeBracketIndex + 1);
+      port = portPart.startsWith(':') ? portPart.substring(1) : '';
+    } else {
+      // IPv4地址或域名，使用最后一个冒号分割
+      const lastColonIndex = serverPortPart.lastIndexOf(':');
+      if (lastColonIndex === -1) return null;
+      
+      server = serverPortPart.substring(0, lastColonIndex);
+      port = serverPortPart.substring(lastColonIndex + 1);
+    }
+    
     if (!server || !port) return null;
     
     let method, password;
